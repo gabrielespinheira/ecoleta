@@ -5,8 +5,9 @@
   "main": "index.js",
   "repository": "http://github.com/ogabrielaraujo/ecoleta",
   "scripts": {
-    "dev": "ts-node-dev src/server.ts",
-    "migrate": "knex migrate:latest --knexfile knexfile.ts migrate:latest"
+    "dev": "ts-node-dev --transpileOnly --ignore-watch node_modules src/server.ts",
+    "migrate": "knex --knexfile knexfile.ts migrate:latest",
+    "seed": "knex --knexfile knexfile.ts seed:run"
   },
   "keywords": [],
   "author": "",
