@@ -13,7 +13,12 @@ routes.get('/', (request, response) => {
   return response.json({ status: true })
 })
 
+// items
 routes.get('/items', itemsController.index)
+
+// points
+routes.get('/points', pointsController.index)
 routes.post('/points', pointsController.store)
+routes.get('/points/:id', pointsController.show)
 
 export default routes
