@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   View,
   Text,
@@ -6,21 +6,67 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
+  Linking,
 } from 'react-native'
 import { Feather as Icon, FontAwesome } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
+import * as MailComposer from 'expo-mail-composer'
+import api from '../../services/api'
+
+interface Params {
+  point_id: number
+}
+
+interface Point {
+  id: number
+  image: string
+  name: string
+  email: string
+  whatsapp: string
+  city: string
+  uf: string
+  items: {
+    title: string
+  }[]
+}
 
 const Detail: React.FC = () => {
+  const [point, setPoint] = useState<Point>({} as Point)
   const navigation = useNavigation()
+  const route = useRoute()
+
+  const routeParams = route.params as Params
+
+  useEffect(() => {
+    api
+      .get(`points/${routeParams.point_id}`)
+      .then((response) => {
+        setPoint(response.data)
+      })
+      .catch((err) => {
+        alert(err)
+      })
+  }, [])
 
   function handleGoBack() {
     navigation.navigate('Home')
   }
 
-  function handleWhatsapp() {}
+  function handleWhatsapp() {
+    Linking.openURL(`whatsapp://send?phone=${point.whatsapp}&text=Ecoleta`)
+  }
 
-  function handleEmail() {}
+  function handleEmail() {
+    MailComposer.composeAsync({
+      subject: 'Ecoleta',
+      recipients: [point.email],
+    })
+  }
+
+  if (!point.id) {
+    return null
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -32,17 +78,20 @@ const Detail: React.FC = () => {
         <Image
           style={styles.pointImage}
           source={{
-            uri:
-              'https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
+            uri: point.image,
           }}
         />
 
-        <Text style={styles.pointName}>Mercado</Text>
-        <Text style={styles.pointItems}>Lâmpadas, Óleo</Text>
+        <Text style={styles.pointName}>{point.name}</Text>
+        <Text style={styles.pointItems}>
+          {point.items.map((item) => item.title).join(', ')}
+        </Text>
 
         <View style={styles.address}>
           <Text style={styles.addressTitle}>Endereço</Text>
-          <Text style={styles.addressContent}>Rua Tal</Text>
+          <Text style={styles.addressContent}>
+            {point.city}, {point.uf}
+          </Text>
         </View>
       </View>
 
@@ -70,7 +119,7 @@ const styles = StyleSheet.create({
 
   pointImage: {
     width: '100%',
-    height: 120,
+    height: 300,
     resizeMode: 'cover',
     borderRadius: 10,
     marginTop: 32,
@@ -112,7 +161,6 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderColor: '#999',
     paddingVertical: 20,
-    paddingBottom: 0,
     paddingHorizontal: 32,
     flexDirection: 'row',
     justifyContent: 'space-between',
