@@ -29,7 +29,8 @@
     "react-native-svg": "^12.1.0",
     "react-native-web": "~0.12.3",
     "expo-mail-composer": "~8.1.0",
-    "logkitty": ">=0.7.1"
+    "logkitty": ">=0.7.1",
+    "mem": ">=4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
