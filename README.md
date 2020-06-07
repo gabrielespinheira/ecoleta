@@ -13,6 +13,9 @@
 
 ## :dart: Features
 
+- [x] Interface Web
+- [x] Interface Mobile
+- [x] API REST
 - [x] Cadastro de Pontos de Coleta
 - [x] Listagem de Pontos
 - [x] Listagem de Itens para Coleta
